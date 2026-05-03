@@ -99,16 +99,6 @@ npm run dev
 2. Import into [Vercel](https://vercel.com/new) and connect your repo
 3. Add `ANTHROPIC_API_KEY` as an environment variable in your Vercel project settings
 4. Deploy
-
----
-
-## Team
-
-| Name | School |
-|---|---|
-| Ansia Sae | MIT |
-| Michelle Yu | MIT |
-
 ---
 
 ## Disclaimer
