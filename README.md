@@ -47,7 +47,6 @@ Output includes:
 - Home care tips if urgency allows
 - A script to read to your doctor
 
----
 
 ## Getting Started
 
