@@ -15,10 +15,10 @@ interface CareResult {
 }
 
 const urgencyConfig = {
-  er: { badge: '🚨 Go to ER Now', color: 'bg-red-100 text-red-800 border-red-200' },
-  soon: { badge: '⚠️ See a Doctor Soon (within 48hrs)', color: 'bg-orange-100 text-orange-800 border-orange-200' },
-  appointment: { badge: '📅 Schedule an Appointment', color: 'bg-blue-100 text-blue-800 border-blue-200' },
-  home: { badge: '💊 Can Try Home Care First', color: 'bg-green-100 text-green-800 border-green-200' },
+  er:          { label: 'Go to ER Now',                    color: '#dc2626', bg: '#fef2f2' },
+  soon:        { label: 'See a Doctor Soon (within 48hrs)', color: '#d97706', bg: '#fffbeb' },
+  appointment: { label: 'Schedule an Appointment',          color: '#2563eb', bg: '#eff6ff' },
+  home:        { label: 'Can Try Home Care First',          color: '#16a34a', bg: '#f0fdf4' },
 }
 
 export default function FindCarePage() {
@@ -50,76 +50,114 @@ export default function FindCarePage() {
     }
   }
 
+  const inputStyle = {
+    background: '#e8edf2',
+    boxShadow: 'inset 4px 4px 10px #c5cad0, inset -4px -4px 10px #ffffff',
+    border: 'none',
+    outline: 'none',
+    borderRadius: '14px',
+    color: '#1e293b',
+  }
+
   return (
-    <main className="max-w-2xl mx-auto px-6 py-10 fade-in">
-      <Link href="/" className="text-blue-500 text-sm hover:underline mb-6 inline-block">← Back</Link>
+    <main className="max-w-2xl mx-auto px-6 py-10 fade-in" style={{ background: '#e8edf2', minHeight: '100vh' }}>
+      <Link href="/" className="text-blue-500 text-sm font-medium hover:text-blue-700 mb-8 inline-block">
+        &larr; Back
+      </Link>
       <Disclaimer />
-      <h1 className="font-heading text-4xl text-blue-950 mb-2">Find the Right Care</h1>
-      <p className="text-gray-500 mb-8">Describe what you're experiencing and we'll help you understand what kind of care you need.</p>
+
+      <h1 className="font-heading text-4xl text-slate-800 mb-2">Find Care</h1>
+      <p className="text-slate-500 text-sm mb-8 leading-relaxed">
+        Describe what you're experiencing and we'll help you find the right level of care.
+      </p>
 
       <textarea
         value={concern}
         onChange={(e) => setConcern(e.target.value)}
-        placeholder="Describe your symptoms or health concern... (e.g. 'I've had a persistent cough for 2 weeks and mild fever')"
+        placeholder="Describe your symptoms or concern... (e.g. 'I've had a persistent cough for 2 weeks and mild fever')"
         rows={4}
-        className="w-full border border-gray-200 rounded-xl p-4 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-violet-300 bg-white"
+        className="w-full p-4 text-sm resize-none placeholder-slate-400"
+        style={inputStyle}
       />
 
       <input
         value={location}
         onChange={(e) => setLocation(e.target.value)}
         placeholder="Your location (city or zip) — optional"
-        className="mt-3 w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-violet-300 bg-white"
+        className="mt-4 w-full px-4 py-3 text-sm placeholder-slate-400"
+        style={inputStyle}
       />
 
       <button
         onClick={find}
         disabled={!concern.trim() || loading}
-        className="mt-5 w-full bg-violet-600 hover:bg-violet-700 disabled:bg-gray-200 disabled:text-gray-400 text-white font-semibold py-3 rounded-xl transition-colors"
+        className="btn-blue mt-5 w-full py-3 text-sm"
       >
-        {loading ? 'Finding your options...' : 'Find Care Options'}
+        {loading ? 'Finding options...' : 'Find Care Options'}
       </button>
 
       {loading && (
-        <div className="flex items-center justify-center gap-3 mt-8 text-violet-600">
-          <div className="w-5 h-5 border-2 border-violet-600 border-t-transparent rounded-full animate-spin" />
-          <span>Finding your options...</span>
+        <div className="flex items-center justify-center gap-3 mt-8 text-blue-500 text-sm">
+          <div className="w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
+          Finding your options...
         </div>
       )}
 
-      {error && <div className="mt-6 bg-red-50 border border-red-200 rounded-xl p-4 text-red-700 text-sm">{error}</div>}
+      {error && (
+        <div
+          className="mt-6 px-5 py-4 rounded-2xl text-red-600 text-sm"
+          style={{ boxShadow: 'inset 3px 3px 8px #c5cad0, inset -3px -3px 8px #ffffff', background: '#e8edf2' }}
+        >
+          {error}
+        </div>
+      )}
 
       {result && (
         <div className="mt-8 space-y-4">
-          <ResultCard title="What This Might Be" icon="🩺">
+          <ResultCard title="What This Might Be">
             <p>{result.overview}</p>
           </ResultCard>
 
-          <div className={`border rounded-2xl p-5 ${urgencyConfig[result.urgency].color}`}>
-            <p className="font-bold text-lg">{urgencyConfig[result.urgency].badge}</p>
-            <p className="text-sm mt-1">{result.urgencyReason}</p>
+          <div
+            className="rounded-2xl px-6 py-5"
+            style={{ background: urgencyConfig[result.urgency].bg, boxShadow: '6px 6px 14px #c5cad0, -6px -6px 14px #ffffff' }}
+          >
+            <p className="font-semibold text-base" style={{ color: urgencyConfig[result.urgency].color }}>
+              {urgencyConfig[result.urgency].label}
+            </p>
+            <p className="text-slate-500 text-sm mt-1">{result.urgencyReason}</p>
           </div>
 
-          <ResultCard title="Type of Provider to See" icon="👨‍⚕️">
-            <p className="font-medium text-base">{result.providerType}</p>
+          <ResultCard title="Type of Provider">
+            <p className="font-medium text-slate-800">{result.providerType}</p>
           </ResultCard>
 
-          <ResultCard title="How to Find Help" icon="🗺️">
-            <ol className="list-decimal list-inside space-y-1">
+          <ResultCard title="How to Find Help">
+            <ol className="space-y-2 list-decimal list-inside">
               {result.howToFind.map((s, i) => <li key={i}>{s}</li>)}
             </ol>
           </ResultCard>
 
           {result.homeCareTips.length > 0 && (
-            <ResultCard title="Home Care Tips" icon="🏠">
-              <ul className="list-disc list-inside space-y-1">
-                {result.homeCareTips.map((t, i) => <li key={i}>{t}</li>)}
+            <ResultCard title="Home Care Tips">
+              <ul className="space-y-2">
+                {result.homeCareTips.map((t, i) => (
+                  <li key={i} className="flex gap-2">
+                    <span className="text-blue-400 font-bold mt-0.5">—</span>
+                    <span>{t}</span>
+                  </li>
+                ))}
               </ul>
             </ResultCard>
           )}
 
-          <ResultCard title="What to Tell the Doctor" icon="📋">
-            <p className="italic text-gray-600 bg-gray-50 rounded-lg p-3 border border-gray-100">&ldquo;{result.scriptForDoctor}&rdquo;</p>
+          <ResultCard title="What to Tell Your Doctor">
+            <p
+              className="italic text-slate-600 rounded-xl px-4 py-3 text-sm leading-relaxed"
+              style={{ boxShadow: 'inset 3px 3px 8px #c5cad0, inset -3px -3px 8px #ffffff', background: '#e8edf2' }}
+            >
+              &ldquo;{result.scriptForDoctor}&rdquo;
+            </p>
           </ResultCard>
         </div>
       )}

@@ -7,14 +7,16 @@ interface ResultCardProps {
   children: ReactNode
 }
 
-export default function ResultCard({ title, icon, children }: ResultCardProps) {
+export default function ResultCard({ title, children }: ResultCardProps) {
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-blue-50 overflow-hidden mb-4">
-      <div className="bg-blue-50 px-5 py-3 flex items-center gap-2 border-b border-blue-100">
-        {icon && <span className="text-lg">{icon}</span>}
-        <h3 className="font-semibold text-blue-900 text-sm uppercase tracking-wide">{title}</h3>
+    <div
+      className="rounded-2xl overflow-hidden mb-4"
+      style={{ background: '#e8edf2', boxShadow: '6px 6px 14px #c5cad0, -6px -6px 14px #ffffff' }}
+    >
+      <div className="px-6 py-3 border-b border-slate-200/60">
+        <h3 className="text-xs font-semibold uppercase tracking-widest text-blue-600">{title}</h3>
       </div>
-      <div className="px-5 py-4 text-gray-700 text-sm leading-relaxed">{children}</div>
+      <div className="px-6 py-5 text-slate-600 text-sm leading-relaxed">{children}</div>
     </div>
   )
 }

@@ -21,10 +21,10 @@ interface ReportResult {
   followUp: string
 }
 
-const statusBadge = (status: Metric['status']) => {
-  if (status === 'normal') return <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full">🟢 Normal</span>
-  if (status === 'borderline') return <span className="text-xs bg-yellow-100 text-yellow-700 px-2 py-0.5 rounded-full">🟡 Borderline</span>
-  return <span className="text-xs bg-red-100 text-red-700 px-2 py-0.5 rounded-full">🔴 Abnormal</span>
+const statusStyles: Record<Metric['status'], { label: string; color: string }> = {
+  normal:     { label: 'Normal',     color: '#16a34a' },
+  borderline: { label: 'Borderline', color: '#d97706' },
+  abnormal:   { label: 'Abnormal',   color: '#dc2626' },
 }
 
 export default function MedicalReportsPage() {
@@ -55,59 +55,91 @@ export default function MedicalReportsPage() {
   }
 
   return (
-    <main className="max-w-2xl mx-auto px-6 py-10 fade-in">
-      <Link href="/" className="text-blue-500 text-sm hover:underline mb-6 inline-block">← Back</Link>
+    <main className="max-w-2xl mx-auto px-6 py-10 fade-in" style={{ background: '#e8edf2', minHeight: '100vh' }}>
+      <Link href="/" className="text-blue-500 text-sm font-medium hover:text-blue-700 mb-8 inline-block">
+        &larr; Back
+      </Link>
       <Disclaimer />
-      <h1 className="font-heading text-4xl text-blue-950 mb-2">Understand Your Lab Results</h1>
-      <p className="text-gray-500 mb-8">Upload your medical report and we'll explain what every number means — and what you can do about it.</p>
+
+      <h1 className="font-heading text-4xl text-slate-800 mb-2">Medical Reports</h1>
+      <p className="text-slate-500 text-sm mb-8 leading-relaxed">
+        Upload your lab results and we'll explain what every number means — and what you can do about it.
+      </p>
 
       <FileUpload onFileSelect={setFile} />
 
       <button
         onClick={analyze}
         disabled={!file || loading}
-        className="mt-5 w-full bg-teal-600 hover:bg-teal-700 disabled:bg-gray-200 disabled:text-gray-400 text-white font-semibold py-3 rounded-xl transition-colors"
+        className="btn-blue mt-5 w-full py-3 text-sm"
       >
-        {loading ? 'Reading your results...' : 'Analyze Report'}
+        {loading ? 'Reading results...' : 'Analyze Report'}
       </button>
 
       {loading && (
-        <div className="flex items-center justify-center gap-3 mt-8 text-teal-600">
-          <div className="w-5 h-5 border-2 border-teal-600 border-t-transparent rounded-full animate-spin" />
-          <span>Reading your results...</span>
+        <div className="flex items-center justify-center gap-3 mt-8 text-blue-500 text-sm">
+          <div className="w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
+          Reading your results...
         </div>
       )}
 
-      {error && <div className="mt-6 bg-red-50 border border-red-200 rounded-xl p-4 text-red-700 text-sm">{error}</div>}
+      {error && (
+        <div
+          className="mt-6 px-5 py-4 rounded-2xl text-red-600 text-sm"
+          style={{ boxShadow: 'inset 3px 3px 8px #c5cad0, inset -3px -3px 8px #ffffff', background: '#e8edf2' }}
+        >
+          {error}
+        </div>
+      )}
 
       {result && (
         <div className="mt-8 space-y-4">
-          <ResultCard title="Overall Summary" icon="📊">
+          <ResultCard title="Overview">
             <p>{result.summary}</p>
           </ResultCard>
 
-          <ResultCard title="Your Metrics" icon="🔬">
+          <ResultCard title="Your Metrics">
             <div className="space-y-4">
-              {result.metrics.map((m, i) => (
-                <div key={i} className="border border-gray-100 rounded-xl p-4">
-                  <div className="flex items-center justify-between mb-1">
-                    <span className="font-semibold text-gray-800">{m.name}</span>
-                    {statusBadge(m.status)}
+              {result.metrics.map((m, i) => {
+                const s = statusStyles[m.status]
+                return (
+                  <div
+                    key={i}
+                    className="rounded-xl p-4"
+                    style={{ boxShadow: 'inset 3px 3px 8px #c5cad0, inset -3px -3px 8px #ffffff', background: '#e8edf2' }}
+                  >
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="font-semibold text-slate-700 text-sm">{m.name}</span>
+                      <span
+                        className="text-xs font-semibold px-3 py-0.5 rounded-full"
+                        style={{ color: s.color, background: s.color + '18' }}
+                      >
+                        {s.label}
+                      </span>
+                    </div>
+                    <p className="text-blue-600 font-medium text-sm">
+                      {m.value} {m.unit}
+                      <span className="text-slate-400 font-normal ml-2 text-xs">normal: {m.normalRange}</span>
+                    </p>
+                    <p className="text-slate-500 text-xs mt-1 leading-relaxed">{m.explanation}</p>
                   </div>
-                  <p className="text-blue-700 font-medium">{m.value} {m.unit} <span className="text-gray-400 font-normal text-xs">normal: {m.normalRange}</span></p>
-                  <p className="text-gray-500 text-sm mt-1">{m.explanation}</p>
-                </div>
-              ))}
+                )
+              })}
             </div>
           </ResultCard>
 
-          <ResultCard title="Lifestyle Recommendations" icon="🌱">
-            <ul className="list-disc list-inside space-y-1">
-              {result.recommendations.map((r, i) => <li key={i}>{r}</li>)}
+          <ResultCard title="Lifestyle Recommendations">
+            <ul className="space-y-2">
+              {result.recommendations.map((r, i) => (
+                <li key={i} className="flex gap-2">
+                  <span className="text-blue-400 font-bold mt-0.5">—</span>
+                  <span>{r}</span>
+                </li>
+              ))}
             </ul>
           </ResultCard>
 
-          <ResultCard title="When to Follow Up" icon="📅">
+          <ResultCard title="When to Follow Up">
             <p>{result.followUp}</p>
           </ResultCard>
         </div>
