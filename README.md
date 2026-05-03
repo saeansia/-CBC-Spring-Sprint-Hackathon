@@ -79,7 +79,7 @@ npm run dev
 
 5. Open [http://localhost:3000](http://localhost:3000) in your browser.
 
----
+
 
 ## Tech Stack
 
@@ -91,7 +91,7 @@ npm run dev
 | File Handling | Multipart form data, base64 encoding for Claude vision API |
 | Deployment | Vercel |
 
----
+
 
 ## Deployment
 
@@ -99,7 +99,6 @@ npm run dev
 2. Import into [Vercel](https://vercel.com/new) and connect your repo
 3. Add `ANTHROPIC_API_KEY` as an environment variable in your Vercel project settings
 4. Deploy
----
 
 ## Disclaimer
 
